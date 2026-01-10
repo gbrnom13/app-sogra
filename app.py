@@ -36,7 +36,7 @@ def salvar_dados(dados):
 # --- INTERFACE DO APLICATIVO ---
 st.set_page_config(page_title="Precificação da Sogra", page_icon="🍰")
 
-st.title("🍰 Calculadora de Doces")
+st.title("🍰 Precificação - Padoca da Nane")
 
 # Carrega a despensa
 df_despensa = carregar_dados()
