@@ -15,11 +15,11 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 
 def carregar_dados():
     # Lê a planilha e garante que não pegue cache velho (ttl=0)
-    return conn.read(worksheet="Página1", ttl=0)
+    return conn.read(worksheet="Dados", ttl=0)
 
 def salvar_dados(df_novo):
     # Atualiza a planilha no Google
-    conn.update(worksheet="Página1", data=df_novo)
+    conn.update(worksheet="Dados", data=df_novo)
     st.cache_data.clear() # Limpa cache do Streamlit
 
 # Abas
