@@ -34,7 +34,7 @@ def salvar_dados(dados):
         json.dump(dados, f, indent=4)
 
 # --- INTERFACE DO APLICATIVO ---
-st.set_page_config(page_title="Precificação da Sogra", page_icon="🍰")
+st.set_page_config(page_title="Precificação - Padoca da Nane", page_icon="🍰")
 
 st.title("🍰 Precificação - Padoca da Nane")
 
@@ -136,7 +136,7 @@ with aba_despensa:
 # --- ABA 3: CONFIGURAÇÕES ---
 with aba_config:
     st.header("Ajustes do Negócio")
-    st.write("Defina aqui quanto vale o tempo dela.")
+    st.write("Defina aqui quanto vale o seu tempo.")
     
     st.session_state['valor_hora'] = st.number_input(
         "Valor da Hora de Trabalho (R$):", value=VALOR_HORA_SUGERIDO, step=0.50
