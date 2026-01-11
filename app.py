@@ -48,14 +48,15 @@ def salvar_dados(df_novo):
 aba_calc, aba_despensa, aba_config = st.tabs(["🧮 Calcular Receita", "📦 Minha Despensa", "⚙️ Configurações"])
 
 # Carrega dados iniciais
-try:
-    df_despensa = carregar_dados()
-    # Garante que as colunas numéricas sejam números
-    df_despensa['preco'] = pd.to_numeric(df_despensa['preco'])
-    df_despensa['qtd_emb'] = pd.to_numeric(df_despensa['qtd_emb'])
-except Exception as e:
-    st.error(f"Erro ao ler a planilha. Verifique se o cabeçalho está correto (item, preco, qtd_emb, unidade). Erro: {e}")
-    st.stop()
+st.write("--- Tentando ler dados... ---")
+df_despensa = carregar_dados()
+
+st.write("Sucesso! Tipo do dado:", type(df_despensa))
+st.dataframe(df_despensa.head()) # Mostra as primeiras linhas
+
+# Se der erro, ele vai explodir aqui e mostrar o motivo real na tela
+df_despensa['preco'] = pd.to_numeric(df_despensa['preco'])
+df_despensa['qtd_emb'] = pd.to_numeric(df_despensa['qtd_emb'])
 
 # --- ABA 1: CALCULADORA ---
 with aba_calc:
