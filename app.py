@@ -114,21 +114,35 @@ with aba_despensa:
     st.info("As alterações aqui salvam direto na sua planilha do Google!")
 
     # Editor de dados
-    df_editado = st.data_editor(
-        df_despensa, 
-        num_rows="dynamic",
-        column_config={
-            "preco": st.column_config.NumberColumn("Preço (R$)", format="%.2f"),
-            "qtd_emb": st.column_config.NumberColumn("Qtd Emb.", format="%d"),
-        },
-        key="editor_despensa"
-    )
+    st.write("### Minha Despensa")
 
-    if st.button("💾 Salvar Alterações na Planilha"):
-        with st.spinner("Salvando no Google..."):
-            salvar_dados(df_editado)
-        st.success("Salvo com sucesso! Pode fechar o app que não perde nada.")
+# 1. Cria a tabela editável
+# num_rows="dynamic" permite clicar no botão de "+" para adicionar itens
+df_editado = st.data_editor(
+    df_despensa, 
+    num_rows="dynamic", 
+    hide_index=True,  # Esconde a coluna de números visualmente
+    key="editor_despensa"
+)
+
+# 2. Botão para Salvar no Google
+if st.button("Salvar Alterações"):
+    try:
+        # Limpeza básica: Remove linhas que o usuário criou mas deixou o item vazio
+        df_para_salvar = df_editado.dropna(subset=['item'])
+        
+        # O PULO DO GATO: Envia os dados de volta para a aba "Dados"
+        conn.update(worksheet="Dados", data=df_para_salvar)
+        
+        st.success("Planilha atualizada com sucesso!")
+        
+        # Recarrega a página para puxar os dados novos (o None vai sumir e virar número)
+        import time
+        time.sleep(1) # Dá um tempinho para o Google processar
         st.rerun()
+        
+    except Exception as e:
+        st.error(f"Erro ao salvar: {e}")
 
 # --- ABA 3: CONFIGURAÇÕES ---
 with aba_config:
