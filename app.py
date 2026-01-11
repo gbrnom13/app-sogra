@@ -117,32 +117,46 @@ with aba_despensa:
     st.write("### Minha Despensa")
 
 # 1. Cria a tabela editável
-# num_rows="dynamic" permite clicar no botão de "+" para adicionar itens
-df_editado = st.data_editor(
-    df_despensa, 
-    num_rows="dynamic", 
-    hide_index=True,  # Esconde a coluna de números visualmente
-    key="editor_despensa"
-)
+# --- Bloco de Gerenciamento da Despensa ---
+# O st.expander esconde a tabela. O texto dentro das aspas é o título do botão.
+with st.expander("📝 Gerenciar Itens da Despensa (Clique para abrir/fechar)"):
+    
+    st.write("Adicione, remova ou edite itens abaixo:")
 
-# 2. Botão para Salvar no Google
-if st.button("Salvar Alterações"):
-    try:
-        # Limpeza básica: Remove linhas que o usuário criou mas deixou o item vazio
-        df_para_salvar = df_editado.dropna(subset=['item'])
-        
-        # O PULO DO GATO: Envia os dados de volta para a aba "Dados"
-        conn.update(worksheet="Dados", data=df_para_salvar)
-        
-        st.success("Planilha atualizada com sucesso!")
-        
-        # Recarrega a página para puxar os dados novos (o None vai sumir e virar número)
-        import time
-        time.sleep(1) # Dá um tempinho para o Google processar
-        st.rerun()
-        
-    except Exception as e:
-        st.error(f"Erro ao salvar: {e}")
+    # TRUQUE PARA O NÚMERO: 
+    # Às vezes o pandas carrega o índice antigo como uma coluna "Unnamed: 0".
+    # Isso remove qualquer coluna estranha antes de mostrar o editor.
+    colunas_validas = ['item', 'preco', 'qtd_emb', 'unidade']
+    # Garante que só existam as colunas que queremos, ignorando índices velhos
+    df_limpo = df_despensa[colunas_validas].copy()
+
+    # Cria o editor
+    df_editado = st.data_editor(
+        df_limpo, 
+        num_rows="dynamic",     # Permite adicionar linhas
+        hide_index=True,        # ESCONDE a coluna de números (0, 1, 2...) visualmente
+        use_container_width=True, # Deixa a tabela bonita na largura total
+        key="editor_despensa"
+    )
+
+    # Botão de Salvar
+    if st.button("💾 Salvar Alterações no Google Drive"):
+        try:
+            # Remove linhas onde o usuário não escreveu o nome do item
+            df_para_salvar = df_editado.dropna(subset=['item'])
+            
+            # Envia para o Google
+            conn.update(worksheet="Dados", data=df_para_salvar)
+            
+            st.success("✅ Planilha atualizada com sucesso!")
+            
+            # Espera 1 segundinho e recarrega para sumir a mensagem
+            import time
+            time.sleep(1)
+            st.rerun()
+            
+        except Exception as e:
+            st.error(f"Erro ao salvar: {e}")
 
 # --- ABA 3: CONFIGURAÇÕES ---
 with aba_config:
