@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
+from io import StringIO
 
 # --- CONFIGURAÇÃO INICIAL ---
 VALOR_HORA_SUGERIDO = 16.00
@@ -12,9 +13,6 @@ st.title("🍰 Calculadora de Doces")
 # --- CONEXÃO COM GOOGLE SHEETS ---
 # Cria a conexão
 conn = st.connection("gsheets", type=GSheetsConnection)
-
-import pandas as pd
-from io import StringIO
 
 def carregar_dados():
     # 1. Pega a resposta do Google (que vem como <Response [200]>)
