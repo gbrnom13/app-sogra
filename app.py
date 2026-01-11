@@ -124,7 +124,7 @@ with aba_despensa:
         key="editor_despensa"
     )
 
-   if st.button("Salvar Alterações"):
+if st.button("Salvar Alterações"):
     # 1. Filtra linhas vazias para não salvar sujeira
     df_para_salvar = df_editado.dropna(subset=['item'])
     
