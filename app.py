@@ -13,9 +13,18 @@ st.title("🍰 Calculadora de Doces")
 # Cria a conexão
 conn = st.connection("gsheets", type=GSheetsConnection)
 
+import pandas as pd
+from io import StringIO
+
 def carregar_dados():
-    # Lê a planilha e garante que não pegue cache velho (ttl=0)
-    return conn.read(worksheet="Dados", ttl=0)
+    # 1. Pega a resposta do Google (que vem como <Response [200]>)
+    response = conn.read(worksheet="Dados", ttl=0)
+    
+    # 2. O truque: Pega o TEXTO de dentro da resposta e transforma em tabela
+    # O StringIO faz o texto parecer um arquivo para o Pandas ler
+    tabela = pd.read_csv(StringIO(response.text))
+    
+    return tabela
 
 def salvar_dados(df_novo):
     # Atualiza a planilha no Google
