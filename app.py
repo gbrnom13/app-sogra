@@ -115,13 +115,22 @@ with aba_despensa:
     st.info("As alterações aqui salvam direto na sua planilha do Google!")
 
     # Editor de dados
+    df_despensa.reset_index(drop=True, inplace=True)
+
+    # 2. SELEÇÃO DE COLUNAS
+    # Garante que só as colunas certas apareçam (sem colunas fantasmas)
+    colunas_validas = ['item', 'preco', 'qtd_emb', 'unidade']
+    
+    # Se a planilha tiver colunas a mais, ignoramos. Se faltar, criamos vazias.
+    for col in colunas_validas:
+        if col not in df_despensa.columns:
+            df_despensa[col] = None
+            
+    # 3. CRIA O EDITOR
     df_editado = st.data_editor(
-        df_despensa, 
+        df_despensa[colunas_validas], # Mostra apenas as colunas de dados
         num_rows="dynamic",
-        column_config={
-            "preco": st.column_config.NumberColumn("Preço (R$)", format="%.2f"),
-            "qtd_emb": st.column_config.NumberColumn("Qtd Emb.", format="%d"),
-        },
+        hide_index=True,  # ESCONDE a coluna de números visualmente
         key="editor_despensa"
     )
 
