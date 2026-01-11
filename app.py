@@ -15,30 +15,9 @@ st.title("🍰 Calculadora de Doces")
 conn = st.connection("gsheets", type=GSheetsConnection)
 
 def carregar_dados():
-    # Importação de segurança
-    from io import StringIO
-    import pandas as pd
-    import requests
-
-    # 1. Faz a leitura usando a conexão
-    resultado = conn.read(worksheet="Dados", ttl=0)
-    
-    # 2. VERIFICAÇÃO FINAL:
-    # Se o resultado NÃO for um DataFrame (tabela), mas for um Response (conexão 200)
-    if not isinstance(resultado, pd.DataFrame):
-        # Nós pegamos o texto de dentro da resposta e forçamos virar tabela
-        # O atributo .text contém o CSV bruto que veio do Google
-        if hasattr(resultado, 'text'):
-            tabela = pd.read_csv(StringIO(resultado.text))
-            return tabela
-        else:
-            # Caso extremo: não é tabela nem resposta web
-            st.error("O Google devolveu algo estranho que não é texto nem tabela.")
-            st.stop()
+    # Tenta ler a planilha de forma padrão
+    return conn.read(worksheet="Dados", ttl=0)
             
-    # Se já veio certo (como DataFrame), retorna direto
-    return resultado
-
 def salvar_dados(df_novo):
     # Atualiza a planilha no Google
     conn.update(worksheet="Dados", data=df_novo)
@@ -48,16 +27,20 @@ def salvar_dados(df_novo):
 aba_calc, aba_despensa, aba_config = st.tabs(["🧮 Calcular Receita", "📦 Minha Despensa", "⚙️ Configurações"])
 
 # Carrega dados iniciais
-st.write("--- Tentando ler dados... ---")
-df_despensa = carregar_dados()
+try:
+    # 1. Carrega os dados
+    df_despensa = carregar_dados()
 
-st.write("Sucesso! Tipo do dado:", type(df_despensa))
-st.dataframe(df_despensa.head()) # Mostra as primeiras linhas
+    # 2. Garante que as colunas numéricas sejam números
+    # 'errors="coerce"' transforma textos inválidos em NaN (vazio) sem travar o app
+    df_despensa['preco'] = pd.to_numeric(df_despensa['preco'], errors='coerce')
+    df_despensa['qtd_emb'] = pd.to_numeric(df_despensa['qtd_emb'], errors='coerce')
 
-# Se der erro, ele vai explodir aqui e mostrar o motivo real na tela
-df_despensa['preco'] = pd.to_numeric(df_despensa['preco'])
-df_despensa['qtd_emb'] = pd.to_numeric(df_despensa['qtd_emb'])
-
+except Exception as e:
+    # Se der qualquer erro, mostra uma mensagem amigável e para o app
+    st.error(f"Ops! Erro ao ler a planilha. Verifique se o cabeçalho está correto (item, preco, qtd_emb, unidade).")
+    st.error(f"Detalhe técnico: {e}") # Mostra o erro real menorzinho embaixo
+    st.stop()
 # --- ABA 1: CALCULADORA ---
 with aba_calc:
     st.header("Nova Precificação")
