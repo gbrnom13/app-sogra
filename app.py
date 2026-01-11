@@ -7,8 +7,8 @@ from io import StringIO
 VALOR_HORA_SUGERIDO = 16.00
 VALOR_HORA_FORNO_SUGERIDO = 2.50
 
-st.set_page_config(page_title="Precificação da Sogra", page_icon="🍰")
-st.title("🍰 Calculadora de Doces")
+st.set_page_config(page_title="Precificação - Padoca da Nane", page_icon="🍰")
+st.title("🍰 Precificação - Padoca da Nane")
 
 # --- CONEXÃO COM GOOGLE SHEETS ---
 # Cria a conexão
@@ -110,7 +110,7 @@ with aba_calc:
 
 # --- ABA 2: DESPENSA (Google Sheets) ---
 with aba_despensa:
-    st.header("Gerenciar Preços (Google Sheets)")
+    st.header("Gerenciar Preços")
     st.info("As alterações aqui salvam direto na sua planilha do Google!")
 
     # Editor de dados
