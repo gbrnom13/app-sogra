@@ -126,20 +126,20 @@ with aba_despensa:
 
     if st.button("Salvar Alterações"):
     # 1. Filtra linhas vazias para não salvar sujeira
-    df_para_salvar = df_editado.dropna(subset=['item'])
+        df_para_salvar = df_editado.dropna(subset=['item'])
     
     # 2. Envia para o Google
-    conn.update(worksheet="Dados", data=df_para_salvar)
+        conn.update(worksheet="Dados", data=df_para_salvar)
     
     # 3. MOSTRA A MENSAGEM
-    mensagem = st.success("✅ Salvo com sucesso! A lista foi atualizada.")
+        mensagem = st.success("✅ Salvo com sucesso! A lista foi atualizada.")
     
     # 4. A Mágica: Espera 2 segundos para você ler a mensagem
-    time.sleep(2)
+        time.sleep(2)
     
     # 5. Limpa a mensagem e recarrega a página para atualizar os dados
-    mensagem.empty()
-    st.rerun()
+        mensagem.empty()
+        st.rerun()
 
 # --- ABA 3: CONFIGURAÇÕES ---
 with aba_config:
