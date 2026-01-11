@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 from io import StringIO
+import time
 
 # --- CONFIGURAÇÃO INICIAL ---
 VALOR_HORA_SUGERIDO = 16.00
